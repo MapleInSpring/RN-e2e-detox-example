@@ -23,6 +23,7 @@
     "bundle:ios": "node ./node_modules/react-native/local-cli/cli.js bundle --platform ios --entry-file index.js --bundle-output ios/RNe2eDetoxExample/main.jsbundle --dev=false --verbose",
     "test": "jest",
     "test:watch": "jest --watch",
+    "e2e": "detox build && detox test",
     "lint": "eslint src test",
     "coverage": "rimraf coverage && jest --coverage",
     "version": "support/version-ios.sh"
