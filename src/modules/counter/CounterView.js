@@ -86,7 +86,7 @@ class CounterView extends Component {
           accessibilityLabel={'Increment counter'}
           onPress={this.increment}
           style={[styles.counterButton, loadingStyle]}>
-          <Text style={styles.counter}>
+          <Text style={styles.counter} testID='counter'>
             {this.props.counter}
           </Text>
         </TouchableOpacity>
@@ -95,7 +95,7 @@ class CounterView extends Component {
             accessible={true}
             accessibilityLabel={'Reset counter'}
             onPress={this.reset}>
-          <Text style={styles.linkButton}>
+          <Text style={styles.linkButton} testID='reset'>
             Reset
           </Text>
         </TouchableOpacity>
@@ -104,13 +104,13 @@ class CounterView extends Component {
             accessible={true}
             accessibilityLabel={'Randomize counter'}
             onPress={this.random}>
-          <Text style={styles.linkButton}>
+          <Text style={styles.linkButton} testID='random'>
             Random
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.bored} accessible={true}>
-          <Text style={styles.linkButton}>
+          <Text style={styles.linkButton} testID='bored'>
             {'I\'m bored!'}
           </Text>
         </TouchableOpacity>
