@@ -43,7 +43,7 @@
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/RNe2eDetoxExample.app",
         "build": "xcodebuild -project ios/RNe2eDetoxExample.xcodeproj -scheme RNe2eDetoxExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "ios.simulator",
-        "name": "iPhone 6"
+        "name": "iPhone 7"
       }
     }
   },
