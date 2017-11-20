@@ -1,0 +1,100 @@
+---
+format_version: 1.1.0
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+trigger_map:
+- push_branch: "*"
+  workflow: tests
+workflows:
+  _tests_setup:
+    steps:
+    - activate-ssh-key: {}
+    - git-clone:
+        inputs:
+        - clone_depth: ''
+        title: Git Clone Repo
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            npm cache verify
+
+            npm install
+        title: Install NPM Packages
+    before_run:
+    after_run:
+  _unit_tests:
+    steps:
+    - script:
+        title: Run Unit Tests
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            npm run test
+        is_always_run: true
+    before_run:
+    after_run:
+  _detox_tests:
+    before_run: []
+    after_run: []
+    steps:
+    - npm:
+        inputs:
+        - command: install -g detox-cli
+        title: Install Detox CLI
+    - npm:
+        inputs:
+        - command: install -g react-native-cli
+        title: Install React Native CLI
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            brew tap facebook/fb
+            export CODE_SIGNING_REQUIRED=NO
+            brew install fbsimctl
+
+            brew tap wix/brew
+            brew install applesimutils --HEAD
+        title: Install Detox Utils
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            detox build --configuration ios.sim.release
+        title: Detox - Build Release App
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            detox test --configuration ios.sim.release --cleanup
+        title: Detox - Run E2E Tests
+  tests:
+    before_run:
+    - _tests_setup
+    - _unit_tests
+    - _detox_tests
+    after_run:
+    - _tests_slack_message
+  _tests_slack_message:
+    before_run: []
+    steps:
+    - slack:
+        inputs:
+        - webhook_url: #SLACK_WEBHOOK_URL#
+        - channel: "#builds"
+        - from_username_on_error: Bitrise CI - Tests Shall Not Pass!!
+        - from_username: Bitrise CI - Unit & E2E Tests Passed
+        - message: |-
+            *Build succeeded*: $BITRISE_GIT_MESSAGE
+            *Branch*: $BITRISE_GIT_BRANCH
+        - message_on_error: |-
+            *Build failed*: $BITRISE_GIT_MESSAGE
+            *Branch*: $BITRISE_GIT_BRANCH
+        - emoji: ":shipit:"
+        - emoji_on_error: ":bug:"
+        title: Slack - Send Build Status
